@@ -8,9 +8,9 @@ class Address extends Model
 {
     protected $table = 'addresses';
 
-    public function paginate(int $page): object
+    public function paginate(int $page) : object
     {
-        $limit = 1;
+        $limit = 50;
         // getting count for pagination
         $stCount = "SELECT count(*) as count FROM addresses";
         $statementCount = $this->conn->prepare($stCount);
@@ -18,7 +18,7 @@ class Address extends Model
         $count = $statementCount->fetch()["count"];
         $pages = (int)ceil($count / $limit);
 
-        $offset = $page > 0 ? (($page - 1) * $limit) : 0;
+        $offset = ($page - 1) * $limit;
 
         // getting data for products
         $st = "SELECT * FROM addresses LIMIT :off, :lim";
@@ -28,10 +28,15 @@ class Address extends Model
         $statement->execute();
         $data = $statement->fetchAll();
 
-        return (object)["products" => $data, "pages" => $pages];
+        // setting data for pagination
+        $dataPage = ($page > 0 && $page <= $pages) ? $page : 1;
+        $next = ($page + 1 <= $pages)  ? $page + 1 : null;
+        $previous = ($page > 1)  ? $page - 1 : null;
+
+        return (object)["products" => $data, "pages" => $pages, "page" => $dataPage, "next" => $next, "previous" => $previous];
     }
 
-    public function save(array $data)
+    public function save(array $data) : void
     {
         $st = "INSERT INTO addresses (first_name, last_name, street, postal, city) VALUES( :firstName, :lastName, :street, :postal, :city)";
         $statement = $this->conn->prepare($st);

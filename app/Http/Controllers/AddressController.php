@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Address;
-
 use App\Services\AddressService;
 
 use App\Http\Request;
@@ -27,13 +25,11 @@ class AddressController
             'page' => 'integer'
         ]);
 
-        // load addresses and pagination logic
+        // set page
         $page = isset($request["page"]) && !isset($errors["page"]) && $request["page"] > 1 ? $request["page"] : 1;
+        
+        // load data
         $data = $this->addressService->paginate($page);
-        $data->page = ($page > 0 && $page <= $data->pages) ? $page : 1;
-        $data->next = ($page + 1 <= $data->pages)  ? $page + 1 : null;
-        $data->previous = ($page > 1)  ? $page - 1 : null;
-
 
         require_once APP_ROOT . '/views/index.php';
     }
