@@ -7,7 +7,7 @@ Project is created with:
 * Bootstrap 4.6
 	
 ## Setup
-To run this project copy addresses_db.sql file into you mysql and run composer install. Settings for database and API token can be found in config/config.php
+Mysql setup is in addresses_db.sql included in project. Settings for database and API token can be found in config/config.php. Run composer install.
 
 ```
 $ composer install
