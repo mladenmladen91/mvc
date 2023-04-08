@@ -8,17 +8,23 @@ use App\Models\Address;
 
 class AddressRepository implements AddressRepositoryInterface
 {
-       
+    
+    private $address;
+
+    public function __construct()
+    {
+        $this->address = new Address();
+    }
+
     public function paginate($page): object
     {
-        $address = new Address();
-        return $address->paginate($page);
+        return $this->address->paginate($page);
     }
     
     public function create($request) : void
     {
-        $address = new Address();
-        $address->save([
+        //$address = new Address();
+        $this->address->save([
             "first_name" => $request["first_name"],
             "last_name" => $request["last_name"],
             "street" => $request["street"],

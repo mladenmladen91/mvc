@@ -35,7 +35,7 @@ class Validator
 
     protected function required($key): void
     {
-        if (!isset($this->data[$key])) {
+        if (!isset($this->data[$key]) || trim($this->data[$key]) === "") {
             $this->errors[$key] = $key . ' required!';
         }
     }
@@ -59,4 +59,5 @@ class Validator
             }
         }
     }
+
 }

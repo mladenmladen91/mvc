@@ -6,14 +6,17 @@ use App\Models\Address;
 
 use App\Services\AddressService;
 
-use App\Interfaces\AddressRepositoryInterface;
-
 use App\Http\Request;
 
 use App\Validators\Validator;
 
 class AddressController
 {
+    private $addressService;
+    public function __construct()
+    {
+        $this->addressService = new AddressService();
+    }
 
     public function index()
     {
@@ -24,14 +27,13 @@ class AddressController
             'page' => 'integer'
         ]);
 
+        // load addresses and pagination logic
+        $page = isset($request["page"]) && !isset($errors["page"]) && $request["page"] > 1 ? $request["page"] : 1;
+        $data = $this->addressService->paginate($page);
+        $data->page = ($page > 0 && $page <= $data->pages) ? $page : 1;
+        $data->next = ($page + 1 <= $data->pages)  ? $page + 1 : null;
+        $data->previous = ($page > 1)  ? $page - 1 : null;
 
-        // check if there is an errors
-        if (count($errors) === 0) {
-            // load addresses
-            $page = $request["page"] ?? 0;
-            $addressService = new AddressService();
-            $data = $addressService->paginate($page);
-        }
 
         require_once APP_ROOT . '/views/index.php';
     }
@@ -43,6 +45,7 @@ class AddressController
 
         if ($request->method === 'POST') {
             $requestParams = $request->postParams;
+            
             // validating request
             $errors = (new Validator())->validate($requestParams, [
                 'first_name' => 'required',
@@ -53,53 +56,8 @@ class AddressController
             ]);
 
             if (count($errors) === 0) {
-
-                $addressService = new AddressService();
-                $errorsCheck = $addressService->create($requestParams);
-
-                if (count($errorsCheck) > 0) {
-                   $errors = [...$errors, ...$errorsCheck];
-                }
-               
-//var_dump($errorsCheck);
-                // create a new cURL resource
-                /*$url = 'https://interview.performance-technologies.de/api/address?token=' . API_TOKEN . '&city=' . urlencode($requestParams["city"]) . '&street=' . urlencode($requestParams["street"]) . '&postal=' . urlencode($requestParams["postal"]) . '&country=' . urlencode($requestParams["country"]);
-                
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $result = json_decode(curl_exec($ch), true);
-                curl_close($ch);
-
-                if ($result["success"] === "false") {
-                    foreach ($result["error"] as $key => $value) {
-                        $errors[$key] = $value[0];
-                    }
-                }
-
-                if (count($errors) === 0) {
-                    $address = new Address();
-                    $address->save([
-                        "first_name" => $requestParams["first_name"],
-                        "last_name" => $requestParams["last_name"],
-                        "street" => $requestParams["street"],
-                        "postal" => $requestParams["postal"],
-                        "city" => $requestParams["city"],
-                        "country" => $requestParams["country"]
-                    ]);  
-                }
-                */
+                $errors = $this->addressService->create($requestParams);
             }
-
-            // getting request data
-
-
-            // check if there is an errors
-            /* if (count($errors) === 0) {
-                // load addresses
-                $data = $address->paginate(0, 100);
-            }*/
         }
 
 

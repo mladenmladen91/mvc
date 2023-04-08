@@ -10,22 +10,27 @@ class AddressService
 {
     private array $errors = [];
 
+    public $addressRepository;
+
+    public function __construct()
+    {
+        $this->addressRepository = new AddressRepository();
+    }
+
     // getting category data from the repository and send them to the controller
     public function paginate($page)
     {
-        $addressRepository = new AddressRepository();
-        return $addressRepository->paginate($page);
+        return $this->addressRepository->paginate($page);
     }
     // accepting the request and pass it to the saving repository
     public function create($request): array
     {
-        $addressRepository = new AddressRepository();
         // check address first
         $this->checkAddress($request);
         // if no errors continue
         if (count($this->errors) === 0) {
 
-            $addressRepository->create($request);
+            $this->addressRepository->create($request);
         }
 
         return $this->errors;

@@ -7,8 +7,6 @@ class Director
 
     public $controller;
     public $action;
-    public $parameters;
-
     public $errors = false;
     public $router;
 
@@ -17,8 +15,7 @@ class Director
         $this->router = new Router();
         $this->controller = $this->router->controller;
         $this->action = $this->router->action;
-        $this->parameters = $this->router->parameters;
-
+        
         $this->findController();
         $this->findAction();
     }
@@ -37,7 +34,7 @@ class Director
         ) {
             $this->errors = true;
             $this->controller = "ErrorController";
-            $this->action = "notFound";
+            $this->action = "routeError";
         }
     }
 
@@ -53,13 +50,7 @@ class Director
                 $this->action = $setAction;
             }
 
-            if ((is_numeric($this->action)) && (method_exists(
-                "App\\Http\\Controllers\\" . $this->controller,
-                "show"
-            ))) {
-                $this->action = "show";
-                $this->parameters = $setAction; //2nd URI parameter is actually a parameter; not an action/method
-            } else if ((method_exists("App\\Http\\Controllers\\" . $this->controller, "index")) &&
+            if ((method_exists("App\\Http\\Controllers\\" . $this->controller, "index")) &&
                 ($setAction == "")
             ) {
                 $this->action = "index";
@@ -67,7 +58,7 @@ class Director
             
             if (!method_exists("App\\Http\\Controllers\\" . $this->controller, $this->action)) {
                 $this->controller = "ErrorController";
-                $this->action = "notFound";
+                $this->action = "routeError";
                 $this->errors = true;
             }
         }
@@ -77,6 +68,6 @@ class Director
     {
         $ctrl = "App\\Http\\Controllers\\" . $this->controller;
         $ctrl = new $ctrl;
-        call_user_func(array($ctrl, $this->action), $this->parameters); // Maybe another class for dispatching?
+        call_user_func(array($ctrl, $this->action)); // Maybe another class for dispatching?
     }
 }

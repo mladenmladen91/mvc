@@ -10,13 +10,13 @@ class Address extends Model
 
     public function paginate(int $page): object
     {
-        $limit = 50;
+        $limit = 1;
         // getting count for pagination
         $stCount = "SELECT count(*) as count FROM addresses";
         $statementCount = $this->conn->prepare($stCount);
         $statementCount->execute();
         $count = $statementCount->fetch()["count"];
-        $pages = ceil($count / $limit);
+        $pages = (int)ceil($count / $limit);
 
         $offset = $page > 0 ? (($page - 1) * $limit) : 0;
 
@@ -33,20 +33,14 @@ class Address extends Model
 
     public function save(array $data)
     {
-        $firstName = $data["first_name"];
-        $lastName = $data["last_name"];
-        $street = $data["street"];
-        $postal = $data["postal"];
-        $city = $data["city"];
-        
         $st = "INSERT INTO addresses (first_name, last_name, street, postal, city) VALUES( :firstName, :lastName, :street, :postal, :city)";
         $statement = $this->conn->prepare($st);
         $statement->execute([
-            ":firstName" => $firstName,
-            ":lastName" => $lastName,
-            ":street" => $street,
-            ":postal" => $postal,
-            ":city" => $city
+            ":firstName" => $data["first_name"],
+            ":lastName" => $data["last_name"],
+            ":street" => $data["street"],
+            ":postal" => $data["postal"],
+            ":city" => $data["city"]
         ]);
     }
 }

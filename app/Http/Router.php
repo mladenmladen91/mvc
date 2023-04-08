@@ -6,12 +6,10 @@ class Router {
 
     public $uri;
     public $method;
-
     public $routeParameters;
     public $controller;
     public $action;
-    public $parameters;
-
+    
     public function __construct() {
         $request = new Request();
         $this->uri = $this->sanitizeURI($request->uri);
@@ -20,7 +18,7 @@ class Router {
     }
 
     private function sanitizeURI($uri) {
-        return trim($uri);
+        return trim(strip_tags($uri));
     }
 
     public function setRouteParameters() {
@@ -28,8 +26,6 @@ class Router {
         $this->routeParameters = explode("/", $routeArray[0]);
         $this->setController();
         $this->setAction();
-        $this->setParameters();
-
     }
 
     public function setController() {
@@ -41,12 +37,6 @@ class Router {
     public function setAction() {
         if (isset($this->routeParameters[2])) {
             $this->action = $this->routeParameters[2];
-        }
-    }
-
-    public function setParameters() {
-        if (isset($this->routeParameters[3])) {
-            $this->parameters = $this->routeParameters[3];
         }
     }
 }
