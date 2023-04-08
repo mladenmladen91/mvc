@@ -17,8 +17,8 @@ class AddressService
         $this->addressRepository = new AddressRepository();
     }
 
-    // getting category data from the repository and send them to the controller
-    public function paginate($page)
+    // getting product data
+    public function paginate($page) : object
     {
         return $this->addressRepository->paginate($page);
     }
@@ -36,7 +36,7 @@ class AddressService
         return $this->errors;
     }
 
-    protected function checkAddress($request)
+    protected function checkAddress($request) : void
     {
         // create a new cURL resource
         $url = 'https://interview.performance-technologies.de/api/address?token=' . API_TOKEN . '&city=' . urlencode($request["city"]) . '&street=' . urlencode($request["street"]) . '&postal=' . urlencode($request["postal"]) . '&country=' . urlencode($request["country"]);

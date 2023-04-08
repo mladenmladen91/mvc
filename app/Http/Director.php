@@ -20,7 +20,7 @@ class Director
         $this->findAction();
     }
 
-    public function findController()
+    public function findController() : void
     {
         if ($this->controller == "") {
             $this->controller = "Address";
@@ -38,7 +38,7 @@ class Director
         }
     }
 
-    public function findAction()
+    public function findAction() : void
     {
 
         if ($this->errors != true) {
@@ -64,7 +64,7 @@ class Director
         }
     }
 
-    public function route()
+    public function route() : void
     {
         $ctrl = "App\\Http\\Controllers\\" . $this->controller;
         $ctrl = new $ctrl;

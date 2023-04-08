@@ -15,7 +15,6 @@ class Connection
 
     function __construct()
     {
-
         try {
 
             $this->connection = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->user, $this->pass);
@@ -25,12 +24,12 @@ class Connection
         }
     }
 
-    public function getConnection()
+    public function getConnection() : ?PDO
     {
         return $this->connection;
     }
 
-    public function closeConnection()
+    public function closeConnection() : void
     {
 
         $this->connection = null;
