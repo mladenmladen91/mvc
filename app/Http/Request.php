@@ -17,7 +17,7 @@ class Request
         $this->postParams = $this->filterRequest($_POST);
     }
 
-    protected function filterRequest($request)
+    protected function filterRequest($request) : array
     {
          return array_map(fn($item) => trim(strip_tags($item)), $request);
     }
